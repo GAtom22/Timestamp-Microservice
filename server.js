@@ -23,10 +23,22 @@ app.get("/", function (req, res) {
 
 // your first API endpoint... 
 app.get("/api/timestamp/:date_string?", function (req, res) {
-  console.log(req.params.date_string);
-
-  var date_utc = new Date(req.params.date_string).toUTCString();
-  var date_unix = new Date(req.params.date_string).getTime();
+  //console.log(req.params.date_string);
+  if(req.params.date_string==' '|| req.params.date_string==undefined){
+    var date_utc = new Date().toUTCString();
+    var date_unix = new Date().getTime();
+    
+  }else if(req.params.date_string.split('-').length==3){
+    var date_utc = new Date(req.params.date_string).toUTCString();
+    var date_unix = new Date(req.params.date_string).getTime();
+    
+  }else if(isNaN(Number(req.params.date_string))){ 
+    res.json({"error" : "Invalid Date" });
+    
+  }else{
+    var date_utc = new Date(Number(req.params.date_string)*1000).toUTCString();
+    var date_unix = Number(req.params.date_string);
+  }
   res.json({"unix": date_unix, "utc": date_utc});
 });
 
